@@ -1,7 +1,10 @@
 package com.iiitb.sellerportal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +12,9 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "product")
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Product  implements Serializable {
 
     @Id
