@@ -4,77 +4,81 @@ import com.iiitb.sellerportal.model.Company;
 import com.iiitb.sellerportal.model.CompanyProduct;
 import com.iiitb.sellerportal.model.Product;
 import com.iiitb.sellerportal.model.Seller;
-import com.iiitb.sellerportal.service.CompanyProductService;
-import com.iiitb.sellerportal.service.CompanyService;
-import com.iiitb.sellerportal.service.ProductService;
-import com.iiitb.sellerportal.service.SellerService;
+import com.iiitb.sellerportal.repository.CompanyProductRepository;
+import com.iiitb.sellerportal.repository.CompanyRepository;
+import com.iiitb.sellerportal.repository.ProductRepository;
+import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/company")
 public class CompanyController {
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Autowired
-    private CompanyService companyService;
+    private CompanyProductRepository companyProductRepository;
 
     @Autowired
-    private CompanyProductService companyProductService;
+    private SellerRepository sellerRepository;
 
     @Autowired
-    private SellerService sellerService;
-
-    @Autowired
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     //only for testing purpose
-    @GetMapping("/all")
+    @GetMapping("/company/list")
     public List<Company>findAllCompany(){
-        return companyService.findAllCompany();
+        return companyRepository.findAll();
     }
 
-    @GetMapping("/{companyId}")
+    @GetMapping("/company/{companyId}")
     Optional<Company> findCompanyById(@PathVariable Long companyId){
-        return companyService.findCompanyById(companyId);
+        return companyRepository.findById(companyId);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/company/save")
     Company saveCompany(@RequestBody Company company){
-        return companyService.saveCompany(company);
+        return companyRepository.save(company);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/company/update")
     Company updateCompany(@RequestBody Company company){
-        return companyService.updateCompany(company);
+        return companyRepository.save(company);
     }
 
-    @GetMapping("/seller")
+    @GetMapping("/company/sellerlist")
     List<Seller> findAllSeller(){
-        return sellerService.findAllSeller();
+        return sellerRepository.findAll();
     }
 
-    @GetMapping("/product")
+    @GetMapping("/company/productlist")
     List<Product> findAllProduct(){
-        return productService.findAllProdcut();
+        return productRepository.findAll();
     }
 
-    @GetMapping("/product/{companyId}")
+    @GetMapping("/company/{companyId}/product")
     List<Product> findAllProductOfCompany(@PathVariable Long companyId){
-         return companyProductService.findAllProductOfCompany(companyId).stream().map(p->p.getProduct()).collect(Collectors.toList());
+         return companyProductRepository.findByCompanyId(companyId).stream().map(p->p.getProduct()).collect(Collectors.toList());
     }
 
-    @GetMapping("/product/seller/{sellerId}")
+    @GetMapping("/company/product/seller/{sellerId}/")
     public List<Product> findAllProductOfSeller(@PathVariable Long sellerId){
-        return productService.findAllProductOfSeller(sellerId);
+        return productRepository.findBySellerId(sellerId);
     }
 
-    @PostMapping("/product/register")
-    public CompanyProduct registerProduct(@RequestBody CompanyProduct companyProduct){
-        return companyProductService.registerProduct(companyProduct);
+    @PostMapping("/company/{companyId}/product/{productId}/register")
+    public CompanyProduct registerProduct(@PathVariable Long companyId, @PathVariable Long productId){
+            Company company=companyRepository.findById(companyId).orElse(new Company());
+            Product product=productRepository.findById(productId).orElse(new Product());
+            CompanyProduct companyProduct=new CompanyProduct();
+            companyProduct.setCompany(company);
+            companyProduct.setProduct(product);
+        return companyProduct;
     }
 
 //    @PutMapping("/product/update")
@@ -82,8 +86,8 @@ public class CompanyController {
 //        return  companyProductService.updateProduct(companyProduct);
 //    }
 
-    @DeleteMapping("/product/delete")
-    public String deleteProduct(@PathVariable Long companyProductId){
-        return companyProductService.deleteProduct(companyProductId);
+    @DeleteMapping("/company/{companyId}/product/{productId}/delete")
+    public CompanyProduct deleteProduct(@PathVariable Long companyId, @PathVariable Long productId){
+        return companyProductRepository.deleteByCompanyIdAndProductId(companyId,productId);
     }
 }

@@ -20,8 +20,9 @@ public class SellerController {
     private SellerRepository sellerRepository;
     @Autowired
     private ProductRepository productRepository;
+
     //only for testing purpose
-    @GetMapping("/seller")
+    @GetMapping("/seller/list")
     List<Seller> findAllSeller(){
         return sellerRepository.findAll();
     }
@@ -36,7 +37,6 @@ public class SellerController {
         return sellerRepository.save(seller);
     }
 
-    //require modification
     @PutMapping("/seller/update")
     Seller updateSeller(@RequestBody Seller seller){
         return sellerRepository.save(seller);
@@ -66,7 +66,7 @@ public class SellerController {
         return productRepository.findByIdAndSellerId(productId,sellerId).map(product -> {
             productRepository.delete(product);
             return  ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId + " and sellerId " + sellerId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Product not found with productid " + productId + " and sellerId " + sellerId));
     }
 }
 

@@ -11,4 +11,6 @@ public interface CompanyProductRepository extends JpaRepository<CompanyProduct,L
 
     List<CompanyProduct> findByCompanyId(Long companyId);
 
+    CompanyProduct deleteByCompanyIdAndProductId(Long companyId,Long productId);
+
 }
