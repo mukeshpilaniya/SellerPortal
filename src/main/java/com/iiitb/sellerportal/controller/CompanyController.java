@@ -11,7 +11,6 @@ import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ public class CompanyController {
          return companyProductRepository.findByCompanyId(companyId).stream().map(p->p.getProduct()).collect(Collectors.toList());
     }
 
-    @GetMapping("/company/product/seller/{sellerId}/")
+    @GetMapping("/company/product/seller/{sellerId}")
     public List<Product> findAllProductOfSeller(@PathVariable Long sellerId){
         return productRepository.findBySellerId(sellerId);
     }
@@ -78,16 +77,14 @@ public class CompanyController {
             CompanyProduct companyProduct=new CompanyProduct();
             companyProduct.setCompany(company);
             companyProduct.setProduct(product);
-        return companyProduct;
+        return companyProductRepository.save(companyProduct);
     }
-
-//    @PutMapping("/product/update")
-//    public CompanyProduct updateProduct(@RequestBody CompanyProduct companyProduct){
-//        return  companyProductService.updateProduct(companyProduct);
-//    }
 
     @DeleteMapping("/company/{companyId}/product/{productId}/delete")
     public CompanyProduct deleteProduct(@PathVariable Long companyId, @PathVariable Long productId){
-        return companyProductRepository.deleteByCompanyIdAndProductId(companyId,productId);
+        CompanyProduct companyProduct= companyProductRepository.findByCompanyIdAndProductId(companyId,productId);
+
+        companyProductRepository.deleteById(companyProduct.getId());
+        return companyProduct;
     }
 }
