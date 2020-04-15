@@ -1,6 +1,7 @@
 package com.iiitb.sellerportal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,13 +9,14 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "product")
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Product  implements Serializable {
 
     @Id
@@ -39,5 +41,8 @@ public class Product  implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Seller seller;
-
+    //added this code
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "product")
+    @JsonIgnore
+    private List<CompanyProduct> companyProducts;
 }

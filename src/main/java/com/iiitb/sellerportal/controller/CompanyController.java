@@ -9,6 +9,7 @@ import com.iiitb.sellerportal.repository.CompanyRepository;
 import com.iiitb.sellerportal.repository.ProductRepository;
 import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -81,10 +82,10 @@ public class CompanyController {
     }
 
     @DeleteMapping("/company/{companyId}/product/{productId}/delete")
-    public CompanyProduct deleteProduct(@PathVariable Long companyId, @PathVariable Long productId){
+    public ResponseEntity<?> deleteProduct(@PathVariable Long companyId, @PathVariable Long productId){
         CompanyProduct companyProduct= companyProductRepository.findByCompanyIdAndProductId(companyId,productId);
-
+        System.out.println(companyProduct.getId());
         companyProductRepository.deleteById(companyProduct.getId());
-        return companyProduct;
+        return ResponseEntity.ok().build();
     }
 }

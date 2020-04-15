@@ -1,12 +1,14 @@
 package com.iiitb.sellerportal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,7 +23,6 @@ public class Company implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @JsonIgnore
     @Column(name = "password")
     private String password;
 

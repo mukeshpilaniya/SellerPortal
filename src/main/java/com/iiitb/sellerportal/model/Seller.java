@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "seller")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class Seller implements Serializable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +30,6 @@ public class Seller implements Serializable {
         private String phoneNumber;
 
         @Column(name = "password")
-        @JsonIgnore
         private String password;
 
         @Column(name = "address")
