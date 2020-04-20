@@ -58,7 +58,19 @@ public class    SellerController {
     @PostMapping("/seller/{sellerId}/product/register")
     public Product registerProduct(@PathVariable Long sellerId, @RequestBody Product product)
     {
-        return sellerRepository.findById(sellerId).map(seller -> {product.setSeller(seller);return productRepository.save(product);}).orElseThrow(()->new ResourceNotFoundException("PostId " + sellerId + " not found"));
+        return sellerRepository.findById(sellerId).map(seller -> {product.setSeller(seller);return productRepository.save(product);}).orElseThrow(()->new ResourceNotFoundException("sellerId " + sellerId + " not found"));
+    }
+    //method added
+    @PutMapping("/seller/{sellerId}/product/{productId}/update")
+    public Product updateProduct(@PathVariable Long sellerId,@PathVariable Long productId,@RequestBody Product product){
+        Product product1= productRepository.findByIdAndSellerId(productId,sellerId).orElseThrow(()->new ResourceNotFoundException("seller " + sellerId + " with product "+ productId +" not found"));
+        product1.setDescription(product.getDescription());
+        product1.setDiscount(product.getDiscount());
+        product1.setImageUrl(product.getImageUrl());
+        product1.setName(product.getName());
+        product1.setPrice(product.getPrice());
+        productRepository.save(product1);
+        return product1;
     }
 
     @DeleteMapping("/seller/{sellerId}/product/{productId}/delete")
