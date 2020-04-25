@@ -32,4 +32,7 @@ public class Company implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "role")
+    private  String role;
+
 }

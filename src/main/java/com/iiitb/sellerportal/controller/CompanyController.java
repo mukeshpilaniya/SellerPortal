@@ -10,6 +10,8 @@ import com.iiitb.sellerportal.repository.ProductRepository;
 import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,9 @@ public class CompanyController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //only for testing purpose
     @GetMapping("/company/list")
     public List<Company>findAllCompany(){
@@ -43,13 +48,26 @@ public class CompanyController {
 
     @PostMapping("/company/save")
     Company saveCompany(@RequestBody Company company){
+        company.setRole("COMPANY");
+        String encodedPassword=passwordEncoder.encode(company.getPassword());
+        company.setPassword(encodedPassword);
         return companyRepository.save(company);
     }
 
     @PutMapping("/company/update")
-    Company updateCompany(@RequestBody Company company){
+    Company updateCompany(@RequestBody Company company)
+    {   company.setRole("COMPANY");
+//        String encodedPassword=passwordEncoder.encode(company.getPassword());
+//        company.setPassword(encodedPassword);
         return companyRepository.save(company);
     }
+
+//    //not working properly
+//    @DeleteMapping("/company/{companyId}/delete")
+//    List<CompanyProduct> deleteCompany(@PathVariable Long companyId){
+//         List<CompanyProduct> deletedList =companyProductRepository.deleteByCompanyId(companyId);
+//         return deletedList;
+//    }
 
     @GetMapping("/company/sellerlist")
     List<Seller> findAllSeller(){

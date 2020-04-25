@@ -23,7 +23,7 @@ public class Seller implements Serializable {
         @Column(name = "name")
         private  String name;
 
-        @Column(name = "email")
+        @Column(name = "email",unique = true)
         private String email;
 
         @Column(name = "phone_number")
@@ -34,6 +34,9 @@ public class Seller implements Serializable {
 
         @Column(name = "address")
         private String address;
+
+        @Column(name = "role")
+        private String role;
 
         @OneToMany(cascade = CascadeType.ALL,mappedBy = "seller",fetch = FetchType.LAZY)
         private List<Product> product;

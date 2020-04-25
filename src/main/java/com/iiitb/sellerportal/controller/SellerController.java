@@ -8,6 +8,8 @@ import com.iiitb.sellerportal.repository.ProductRepository;
 import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,9 @@ public class    SellerController {
     private SellerRepository sellerRepository;
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //only for testing purpose
     @GetMapping("/seller/list")
@@ -34,12 +39,18 @@ public class    SellerController {
 
     @PostMapping("/seller/save")
     Seller saveSeller(@RequestBody Seller seller){
+        seller.setRole("SELLER");
+        String encodedPassword=passwordEncoder.encode(seller.getPassword());
+        seller.setPassword(encodedPassword);
         return sellerRepository.save(seller);
     }
 
     @PutMapping("/seller/update")
-    Seller updateSeller(@RequestBody Seller seller){
+    Seller updateSeller(@RequestBody Seller seller)
+    {   seller.setRole("SELLER");
+        seller.setPassword(passwordEncoder.encode(seller.getPassword()));
         return sellerRepository.save(seller);
+
     }
 
     @DeleteMapping("/seller/{sellerId}/delete")
@@ -78,7 +89,7 @@ public class    SellerController {
         return productRepository.findByIdAndSellerId(productId,sellerId).map(product -> {
             productRepository.delete(product);
             return  ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Product not found with productid " + productId + " and sellerId " + sellerId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Product not found with productId " + productId + " and sellerId " + sellerId));
     }
 }
 
