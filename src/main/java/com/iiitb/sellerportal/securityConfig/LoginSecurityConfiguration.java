@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,15 +11,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
-@Order(1)
-public class SellerSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class LoginSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Qualifier("sellerDetailsServiceImpl")
+    @Qualifier("loginDetailsServiceImpl")
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -52,13 +54,15 @@ public class SellerSecurityConfiguration extends WebSecurityConfigurerAdapter {
 ////                .and()
 ////                .exceptionHandling().accessDeniedPage("/superadmin-panel/accessDenied");
 
-
+        //String userRedirect=userDetailsService.loadUserByUsername().
         httpSecurity.authorizeRequests()
+                    .antMatchers("/seller/register").permitAll()
+                    .antMatchers("/company/register").permitAll()
                     .antMatchers("/seller/**").hasRole("SELLER")
                     .antMatchers("/company/**").hasRole("COMPANY")
                     .anyRequest().fullyAuthenticated()
                     .and()
-                    .formLogin().defaultSuccessUrl("/seller/list").permitAll();
+                    .formLogin().successHandler(authenticationSuccessHandler).permitAll();
 
     }
 

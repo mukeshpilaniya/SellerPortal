@@ -2,8 +2,10 @@ package com.iiitb.sellerportal.controller;
 
 
 import com.iiitb.sellerportal.exception.ResourceNotFoundException;
+import com.iiitb.sellerportal.model.Login;
 import com.iiitb.sellerportal.model.Product;
 import com.iiitb.sellerportal.model.Seller;
+import com.iiitb.sellerportal.repository.LoginReposistory;
 import com.iiitb.sellerportal.repository.ProductRepository;
 import com.iiitb.sellerportal.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import sun.rmi.runtime.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +25,8 @@ public class    SellerController {
     private SellerRepository sellerRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private LoginReposistory loginReposistory;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,11 +42,16 @@ public class    SellerController {
         return sellerRepository.findById(sellerId);
     }
 
-    @PostMapping("/seller/save")
-    Seller saveSeller(@RequestBody Seller seller){
+    @PostMapping("/seller/register")
+    Seller register(@RequestBody Seller seller){
         seller.setRole("SELLER");
         String encodedPassword=passwordEncoder.encode(seller.getPassword());
         seller.setPassword(encodedPassword);
+        Login login=new Login();
+        login.setEmail(seller.getEmail());
+        login.setPassword(encodedPassword);
+        login.setRole("SELLER");
+        loginReposistory.save(login);
         return sellerRepository.save(seller);
     }
 

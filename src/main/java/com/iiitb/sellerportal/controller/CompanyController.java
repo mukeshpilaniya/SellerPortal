@@ -1,17 +1,10 @@
 package com.iiitb.sellerportal.controller;
 
-import com.iiitb.sellerportal.model.Company;
-import com.iiitb.sellerportal.model.CompanyProduct;
-import com.iiitb.sellerportal.model.Product;
-import com.iiitb.sellerportal.model.Seller;
-import com.iiitb.sellerportal.repository.CompanyProductRepository;
-import com.iiitb.sellerportal.repository.CompanyRepository;
-import com.iiitb.sellerportal.repository.ProductRepository;
-import com.iiitb.sellerportal.repository.SellerRepository;
+import com.iiitb.sellerportal.model.*;
+import com.iiitb.sellerportal.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,15 +15,15 @@ import java.util.stream.Collectors;
 public class CompanyController {
     @Autowired
     private CompanyRepository companyRepository;
-
     @Autowired
     private CompanyProductRepository companyProductRepository;
-
     @Autowired
     private SellerRepository sellerRepository;
-
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private LoginReposistory loginReposistory;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,11 +39,15 @@ public class CompanyController {
         return companyRepository.findById(companyId);
     }
 
-    @PostMapping("/company/save")
-    Company saveCompany(@RequestBody Company company){
+    @PostMapping("/company/register")
+    Company register(@RequestBody Company company){
         company.setRole("COMPANY");
         String encodedPassword=passwordEncoder.encode(company.getPassword());
         company.setPassword(encodedPassword);
+        Login login=new Login();
+        login.setEmail(company.getEmail());
+        login.setPassword(encodedPassword);
+        login.setRole("COMPANY");
         return companyRepository.save(company);
     }
 
